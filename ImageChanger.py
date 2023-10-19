@@ -100,14 +100,16 @@ class ImageChanger:
         """
         pass
 
-    def blurr_image(self, method='mean', kernel_size=3) -> Image:
+    def blurr_image(self, method='mean', kernel_size=3, padding_style='mirror') -> Image:
         """ This function create a copy of self.image with paddings*
         and blurr it by chosen method.
 
-        :argument method = ['mean', 'gauss']
+        :argument method ∈ ['mean', 'gauss']
         :argument kernel_size >=3
+        :argument padding_style ∈ ['black', 'mirror', other]
 
          *(padding size = kernel_size//2)
+
         """
 
         pass
