@@ -1,9 +1,6 @@
 from PIL import Image
 
 
-from PIL import Image
-
-
 
 class ImageChanger:
     def __init__(self, image: Image) -> None:
