@@ -112,7 +112,12 @@ class ImageChanger:
          *(padding size = kernel_size//2)
         """
         padded_image = Paddinger.add_padding(self.image, kernel_size // 2, padding_style)
-        blurred_image = Blurrer.blurr(padded_image, method, kernel_size)
+        if self.mode == 'L':
+            blurred_image = Blurrer.blurr(padded_image, method, kernel_size)
+        else:
+            blurred_image = Image.merge(self.mode,
+                                        [Blurrer.blurr(ch, method, kernel_size) for ch in padded_image.split()])
+
         return blurred_image
 
     def detect_edge(self) -> Image:
@@ -128,5 +133,5 @@ if __name__ == '__main__':
     bw_img = img.convert('L')
     print(img.mode, bw_img.mode == 'L')
     im_ch = ImageChanger(image=img)
-    new = im_ch.blurr_image(kernel_size=60)
+    new = im_ch.blurr_image(method=Blurr.GAUSS, padding_style=Style.MIRROR, kernel_size=60)
     new.show()

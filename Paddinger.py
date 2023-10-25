@@ -42,7 +42,6 @@ class Paddinger:
                     y_ = 2 * h - y + padding_size - 1
                 else:
                     y_ = y - padding_size
-                print(image.getpixel((x_, y_)))
                 new_image.putpixel((x, y), image.getpixel((x_, y_)))
         return new_image
 

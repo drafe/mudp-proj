@@ -24,13 +24,14 @@ class Blurrer:
     @staticmethod
     def blurr(image: Image, kernel_type: Blurr, kernel_size: int):
         def _kernel_step(x_, y_):
-            index = range(kernel_size)
-            num = np.array([[image.getpixel((x_ + i, y_ + j)) for j in index] for i in index])
+            num = np_img[y_:y_+kernel_size, x_:x_+kernel_size]
             return round(np.sum(num * kernel))
 
         w, h = image.size
+        np_img = np.array(image)
         padding = kernel_size // 2
         kernel = Blurrer.get_kernel(kernel_type, kernel_size)
+
         w_new, h_new = w - 2 * padding, h - 2 * padding
         new_im = Image.new("L", (w_new, h_new))
         for x in range(w_new):
@@ -41,15 +42,18 @@ class Blurrer:
 
 
 if __name__ == "__main__":
-    b_kernel = Blurrer.get_kernel(Blurr.GAUSS, 5)
-    print(b_kernel)
-    print(np.sum(b_kernel))
 
+    # b_kernel = Blurrer.get_kernel(Blurr.GAUSS, 5)
+    # print(b_kernel)
+    # print(np.sum(b_kernel))
+    #
     filename = 'images/cow_gauss.png'
 
     with Image.open(filename) as img:
         img.load()
 
     img_bw = img.convert('L')
-    smooth = Blurrer.blurr(img_bw, Blurr.MEAN, kernel_size=5)
+    print(np.array(img_bw))
+    print(img_bw.size)
+    smooth = Blurrer.blurr(img_bw, Blurr.MEAN, kernel_size=3)
     smooth.show()
