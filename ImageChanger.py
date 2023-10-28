@@ -1,7 +1,7 @@
 from PIL import Image
 from Paddinger import Style, Paddinger
 from Blurrer import Blurr, Blurrer
-from SobelEdgeDetector import Edge, SobelEdgeDetector
+from SobelEdgeDetector import SobelEdgeDetector
 
 
 
