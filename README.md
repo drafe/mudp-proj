@@ -28,9 +28,9 @@ new = im_ch.change_brightness(60)
 new.show()
 ```
 
-| Before                     | After                      |
-|----------------------------|----------------------------|
-| ![initial](images/cow.jpg) | ![changed](images/cow.jpg) |
+| Before                     | After                            |
+|----------------------------|----------------------------------|
+| ![initial](images/cow.jpg) | ![changed](images/cow_brigh.jpg) |
 
 #### 2. change_contrast(contrast)  
 
@@ -46,9 +46,9 @@ new = im_ch.change_contrast(1.5)
 new.show()
 ```
 
-| Before                     | After                      |
-|----------------------------|----------------------------|
-| ![initial](images/cow.jpg) | ![changed](images/cow.jpg) |
+| Before                     | After                               |
+|----------------------------|-------------------------------------|
+| ![initial](images/cow.jpg) | ![changed](images/cow_contrast.jpg) |
 
 #### 3. change_contrast_n_brightness(contrast, brightness)  
 
@@ -65,13 +65,13 @@ __brightness__ ∈ [-255, 255]
  * brightness ∈ (0, 255] return image with high level of brightness.
 
 ```    
-new = im_ch.change_contrast(1.5)
+new = im_ch.change_contrast_n_brightness(contrast=1.5, brightness=-60)
 new.show()
 ```
 
-| Before                     | After                      |
-|----------------------------|----------------------------|
-| ![initial](images/cow.jpg) | ![changed](images/cow.jpg) |
+| Before                     | After                                 |
+|----------------------------|---------------------------------------|
+| ![initial](images/cow.jpg) | ![changed](images/cow_cont&brigh.jpg) |
 
 
 
