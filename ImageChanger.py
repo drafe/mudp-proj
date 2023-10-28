@@ -1,5 +1,8 @@
 from PIL import Image
 from Paddinger import Style, Paddinger
+from Blurrer import Blurr, Blurrer
+from SobelEdgeDetector import Edge, SobelEdgeDetector
+
 
 
 class ImageChanger:
@@ -8,10 +11,19 @@ class ImageChanger:
         self.mode = image.mode
 
     def change_brightness(self, brightness: int = 0) -> Image:
+        """ This function create a copy of self.image,
+        change brightness of copy and return changed image;
+        
+        :param brightness ∈ [-255, 255];
+            brightness = 0 return unchanged image;
+            brightness ∈ [-255, 0) return image with low level of brightness;
+            brightness ∈ (0, 255] return image with high level of brightness;
+        """
+
         new_image = self.image.copy()
-
+        
         pixels = new_image.load()
-
+        
         width, height = new_image.size
         for x in range(width):
             for y in range(height):
@@ -25,10 +37,19 @@ class ImageChanger:
         return new_image
 
     def change_contrast(self, contrast: float = 1.0) -> Image:
+        """ This function create a copy of self.image,
+        change contrast of copy and return changed image;
+
+        :param contrast ∈ [0.0, ...) ;
+            contrast = 1 return unchanged image;
+            contrast ∈ [0, 1) return image with low level of contrast;
+            contrast > 1 return image with high level of contrast;
+        """
+        
         new_image = self.image.copy()
-
+        
         pixels = new_image.load()
-
+        
         width, height = new_image.size
         for x in range(width):
             for y in range(height):
@@ -42,6 +63,25 @@ class ImageChanger:
         return new_image
 
     def change_contrast_n_brightness(self, contrast: float, brightness: int) -> Image:
+        """ This function create a copy of self.image,
+        change contrast of copy and return changed image.
+
+        If image mode is RGB then split image by r-g-b channels
+        and work with them separately like black-white images.
+        After all merge channels to new image and return it;
+
+        :param contrast ∈ [0.0, ...) ;
+            contrast = 1 return unchanged image;
+            contrast ∈ [0, 1) return image with low level of contrast;
+            contrast > 1 return image with high level of contrast;
+
+        :param brightness ∈ [-255, 255];
+            brightness = 0 return unchanged image;
+            brightness ∈ [-255, 0) return image with low level of brightness;
+            brightness ∈ (0, 255] return image with high level of brightness;
+
+        """
+
         new_image = self.image.copy()
 
         pixels = new_image.load()
@@ -67,6 +107,7 @@ class ImageChanger:
                     pixels[x, y] = new_value
 
         return new_image
+
 
     def inverse_colors(self) -> Image:
         """ This function create a copy of self.image,
@@ -98,10 +139,10 @@ class ImageChanger:
         cut images to the smallest one.
         Then create new image of smaller size then input ones
         as result of blending of both images according to level argument
-        and return it.
+        and return it;
 
-        :argument another_image is image to blend with
-        :argument level ∈ [0, 1]
+        :param another_image is image to blend with;
+        :param level ∈ [0, 1]
             level = 0 return just second image (another_image)
             level = 1 return just first image (self.image)
             level ∈ (0, 1) return mixed image with level*100% of first image
@@ -113,38 +154,41 @@ class ImageChanger:
         """
         pass
 
-    def blurr_image(self, method='mean', kernel_size=3, padding_style:Style = Style.MIRROR) -> Image:
+    def blurr_image(self, method: Blurr, kernel_size: int, padding_style: Style) -> Image:
         """ This function create a copy of self.image with paddings*
         and blurr it by chosen method.
 
-        :argument method ∈ ['mean', 'gauss']
+        :argument method ∈ [Blurr.MEAN, Blurr.GAUSS]
         :argument kernel_size >=3
-        :argument padding_style ∈ ['black', 'mirror', 'clamp']
+        :argument padding_style ∈ [Style.BLACK, Style.MIRROR, Style.CLAMP]
 
          *(padding size = kernel_size//2)
         """
+        padded_image = Paddinger.add_padding(self.image, kernel_size // 2, padding_style)
         if self.mode == 'L':
-            padded_image = Paddinger.add_padding(self.image, kernel_size//2, padding_style)
+            blurred_image = Blurrer.blurr(padded_image, method, kernel_size)
         else:
-            r, g, b = self.image.split()
-            r = Paddinger.add_padding(r, kernel_size//2, padding_style)
-            g = Paddinger.add_padding(g, kernel_size//2, padding_style)
-            b = Paddinger.add_padding(b, kernel_size//2, padding_style)
-            padded_image = Image.merge('RGB', [r, g, b])
-        return padded_image
+            blurred_image = Image.merge(self.mode,
+                                        [Blurrer.blurr(ch, method, kernel_size) for ch in padded_image.split()])
+
+        return blurred_image
 
     def detect_edge(self) -> Image:
         """ This function return image of edges detecting on self.image """
-
-        pass
+        kernel_size = 3
+        padding_style = Style.MIRROR
+        padded_image = Paddinger.add_padding(self.image, kernel_size // 2, padding_style)
+        edged_image = SobelEdgeDetector.edge_detect(padded_image)
+        return edged_image
 
 
 if __name__ == '__main__':
-    with Image.open('images/fruits.jpg') as img:
+    with Image.open('images/cow.jpg') as img:
         img.load()
 
     bw_img = img.convert('L')
     print(img.mode, bw_img.mode == 'L')
     im_ch = ImageChanger(image=img)
-    new = im_ch.blurr_image(kernel_size=60)
+    # new = im_ch.blurr_image(method=Blurr.GAUSS, padding_style=Style.MIRROR, kernel_size=12)
+    new = im_ch.detect_edge()
     new.show()

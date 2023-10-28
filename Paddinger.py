@@ -10,10 +10,12 @@ class Style(Enum):
 
 
 class Paddinger:
+    """ Add different Style of paddings to image """
+
     @staticmethod
     def _black_padding(image: Image, padding_size: int) -> Image:
         w, h = image.size
-        new_image = Image.new("L", (w+2*padding_size, h+2*padding_size))
+        new_image = Image.new(image.mode, (w+2*padding_size, h+2*padding_size))
         for x in range(w):
             for y in range(h):
                 pix = image.getpixel((x, y))
@@ -24,7 +26,7 @@ class Paddinger:
     def _mirror_padding(image: Image, padding_size: int) -> Image:
         w, h = image.size
         w_new, h_new = w + padding_size * 2, h + padding_size * 2
-        new_image = Image.new("L", (w_new, h_new))
+        new_image = Image.new(image.mode, (w_new, h_new))
         for x in range(w_new):
             for y in range(h_new):
                 if x <= padding_size:
@@ -40,7 +42,6 @@ class Paddinger:
                     y_ = 2 * h - y + padding_size - 1
                 else:
                     y_ = y - padding_size
-
                 new_image.putpixel((x, y), image.getpixel((x_, y_)))
         return new_image
 
@@ -48,7 +49,7 @@ class Paddinger:
     def _clamp_padding(image, padding_size):
         w, h = image.size
         w_new, h_new = w + padding_size * 2, h + padding_size * 2
-        new_image = Image.new("L", (w_new, h_new))
+        new_image = Image.new(image.mode, (w_new, h_new))
         for x in range(w_new):
             for y in range(h_new):
                 if x <= padding_size:
@@ -78,7 +79,7 @@ class Paddinger:
             elif padding_style == Style.CLAMP:
                 new_image = Paddinger._clamp_padding(image, padding_size)
             else:
-                new_image = Image.new('L', (2, 2))
+                new_image = Paddinger._black_padding(image, padding_size)
             return new_image
         else:
             raise TypeError('No such style')
@@ -90,5 +91,5 @@ if __name__ == "__main__":
 
     bw_img = img.convert('L')
     print(img.mode, bw_img.mode == 'L')
-    new = Paddinger.add_padding(bw_img, 20, Style.CLAMP)
+    new = Paddinger.add_padding(img, 20, Style.CLAMP)
     new.show()
