@@ -41,18 +41,11 @@ class Blurrer:
 
 
 if __name__ == "__main__":
-
-    # b_kernel = Blurrer.get_kernel(Blurr.GAUSS, 5)
-    # print(b_kernel)
-    # print(np.sum(b_kernel))
-    #
-    filename = 'images/cow_gauss.png'
+    filename = 'images/cow_gauss.jpg'
 
     with Image.open(filename) as img:
         img.load()
 
     img_bw = img.convert('L')
-    print(np.array(img_bw))
-    print(img_bw.size)
     smooth = Blurrer.blurr(img_bw, Blurr.MEAN, kernel_size=3)
     smooth.show()

@@ -52,7 +52,7 @@ class SobelEdgeDetector:
             xy_img = np.linalg.norm(np.dstack([
                 SobelEdgeDetector._L_edge_detect(ch, kernel_type) for ch in image.split()
             ]), axis=2).astype(int)
-            new_im = Image.fromarray(xy_img)
+            new_im = Image.fromarray(xy_img).convert('L')
             return new_im
 
 
@@ -63,6 +63,6 @@ if __name__ == "__main__":
         img.load()
 
     img_bw = img.convert('L')
-    smooth = SobelEdgeDetector.edge_detect(img)
-    smooth.show()
+    edges = SobelEdgeDetector.edge_detect(img)
+    edges.show()
 
