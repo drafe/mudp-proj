@@ -4,24 +4,37 @@ from Blurrer import Blurr, Blurrer
 from SobelEdgeDetector import Edge, SobelEdgeDetector
 
 
+
 class ImageChanger:
     def __init__(self, image: Image) -> None:
         self.image = image
         self.mode = image.mode
-        pass
 
     def change_brightness(self, brightness: int = 0) -> Image:
         """ This function create a copy of self.image,
         change brightness of copy and return changed image;
-
+        
         :param brightness ∈ [-255, 255];
             brightness = 0 return unchanged image;
             brightness ∈ [-255, 0) return image with low level of brightness;
             brightness ∈ (0, 255] return image with high level of brightness;
+        """
 
-        Used function change_contrast_n_brightness"""
+        new_image = self.image.copy()
+        
+        pixels = new_image.load()
+        
+        width, height = new_image.size
+        for x in range(width):
+            for y in range(height):
+                r, g, b = pixels[x, y]
+                # Изменяем яркость каждого канала RGB и ограничиваем значения пикселей в диапазоне от 0 до 255
+                r = max(0, min(r + brightness, 255))
+                g = max(0, min(g + brightness, 255))
+                b = max(0, min(b + brightness, 255))
+                pixels[x, y] = (r, g, b)
 
-        pass
+        return new_image
 
     def change_contrast(self, contrast: float = 1.0) -> Image:
         """ This function create a copy of self.image,
@@ -31,10 +44,23 @@ class ImageChanger:
             contrast = 1 return unchanged image;
             contrast ∈ [0, 1) return image with low level of contrast;
             contrast > 1 return image with high level of contrast;
+        """
+        
+        new_image = self.image.copy()
+        
+        pixels = new_image.load()
+        
+        width, height = new_image.size
+        for x in range(width):
+            for y in range(height):
+                r, g, b = pixels[x, y]
+                # Изменяем контрастность каждого канала RGB и ограничиваем значения пикселей в диапазоне от 0 до 255
+                r = max(0, min(int((r - 128) * contrast + 128), 255))
+                g = max(0, min(int((g - 128) * contrast + 128), 255))
+                b = max(0, min(int((b - 128) * contrast + 128), 255))
+                pixels[x, y] = (r, g, b)
 
-        Used function change_contrast_n_brightness"""
-
-        pass
+        return new_image
 
     def change_contrast_n_brightness(self, contrast: float, brightness: int) -> Image:
         """ This function create a copy of self.image,
@@ -56,7 +82,32 @@ class ImageChanger:
 
         """
 
-        pass
+        new_image = self.image.copy()
+
+        pixels = new_image.load()
+
+        width, height = new_image.size
+        for x in range(width):
+            for y in range(height):
+                value = pixels[x, y]
+                if self.mode == 'RGB':
+                    # Если изображение в режиме 'RGB', разделим пиксель на каналы R, G, B
+                    r, g, b = value
+
+                    # Изменяем контрастность и яркость каждого канала RGB и ограничиваем значения пикселей в диапазоне от 0 до 255
+                    r = max(0, min(int((r - 128) * contrast + 128) + brightness, 255))
+                    g = max(0, min(int((g - 128) * contrast + 128) + brightness, 255))
+                    b = max(0, min(int((b - 128) * contrast + 128) + brightness, 255))
+
+                    # Обновляем значение пикселя с измененными каналами R, G, B
+                    pixels[x, y] = (r, g, b)
+                else:
+                    # Если изображение в другом режиме, изменяем контрастность и яркость пикселя и ограничиваем значения в диапазоне от 0 до 255
+                    new_value = max(0, min(int((value - 128) * contrast + 128) + brightness, 255))
+                    pixels[x, y] = new_value
+
+        return new_image
+
 
     def inverse_colors(self) -> Image:
         """ This function create a copy of self.image,
@@ -140,5 +191,4 @@ if __name__ == '__main__':
     im_ch = ImageChanger(image=img)
     # new = im_ch.blurr_image(method=Blurr.GAUSS, padding_style=Style.MIRROR, kernel_size=12)
     new = im_ch.detect_edge()
-    # new.show()
-    new.save('images/cow_edge.jpg')
+    new.show()
