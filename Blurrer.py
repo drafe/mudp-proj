@@ -9,7 +9,6 @@ class Blurr(Enum):
 
 
 class Blurrer:
-
     @staticmethod
     def get_kernel(kernel: Blurr = Blurr.MEAN, kernel_size: int = 3):
         if kernel == Blurr.MEAN:

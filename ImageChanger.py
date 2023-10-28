@@ -1,6 +1,8 @@
 from PIL import Image
 from Paddinger import Style, Paddinger
 from Blurrer import Blurr, Blurrer
+from SobelEdgeDetector import Edge, SobelEdgeDetector
+
 
 class ImageChanger:
     def __init__(self, image: Image) -> None:
@@ -122,16 +124,20 @@ class ImageChanger:
 
     def detect_edge(self) -> Image:
         """ This function return image of edges detecting on self.image """
-
-        pass
+        kernel_size = 3
+        padding_style = Style.MIRROR
+        padded_image = Paddinger.add_padding(self.image, kernel_size // 2, padding_style)
+        edged_image = SobelEdgeDetector.edge_detect(padded_image)
+        return edged_image
 
 
 if __name__ == '__main__':
-    with Image.open('images/fruits.jpg') as img:
+    with Image.open('images/cow.jpg') as img:
         img.load()
 
     bw_img = img.convert('L')
     print(img.mode, bw_img.mode == 'L')
     im_ch = ImageChanger(image=img)
-    new = im_ch.blurr_image(method=Blurr.GAUSS, padding_style=Style.MIRROR, kernel_size=60)
+    # new = im_ch.blurr_image(method=Blurr.GAUSS, padding_style=Style.MIRROR, kernel_size=60)
+    new = im_ch.detect_edge()
     new.show()
