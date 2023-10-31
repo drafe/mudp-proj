@@ -107,18 +107,32 @@ class ImageChanger:
                     pixels[x, y] = new_value
 
         return new_image
-
-
-    def inverse_colors(self) -> Image:
+        
+    def inverse_colors(img_in) -> Image:
         """ This function create a copy of self.image,
         change colors of copy to invert and return changed image.
 
         If image mode is RGB then split image by r-g-b channels
         and work with them separately like black-white images.
         After all merge channels to new image and return it """
-        pass
-
-    def select_frame(self, point1: list[int], point2: list[int]) -> Image:
+        w, h = img_in.size
+        img_out = Image.new('L',(w, h))
+        for x in range(w):
+            for y in range(h):
+                original_pxl = img_in.getpixel((x, y)) # The value of the
+                result_pxl = 255 - original_pxl
+                img_out.putpixel((x, y), result_pxl)
+        return img_out
+        
+    def color_invert(img):
+        r, g, b = img.split()
+        r_new = inverse_colors(r)
+        g_new = inverse_colors(g)
+        b_new = inverse_colors(b)
+        img_out = Image.merge('RGB',[r_new, g_new, b_new])
+        return img_out
+    
+    def select_frame(img, point1, point2) -> Image:
         """ This function create a copy of self.image,
         paint a rectangle with corners on point1 and point2
 
@@ -132,9 +146,15 @@ class ImageChanger:
         //    │
         //    │
         """
-        pass
+        img_f = img
+        draw = ImageDraw.Draw(img_f)
+        start = point1
+        w = point2[0] - point1[0]
+        h = point2[1] - point1[1]
+        draw.rectangle([start, (w,h)], outline = (255, 0, 0), width = 3)
+        img_f.show()
 
-    def blend_image(self, another_image: Image, level: float) -> Image:
+    def blend_image(img1, img2, alpha) -> Image:
         """ This function check the sizes if self.image and another_image,
         cut images to the smallest one.
         Then create new image of smaller size then input ones
@@ -152,8 +172,37 @@ class ImageChanger:
         and work with them separately like black-white images.
         After all merge channels to new image and return it
         """
-        pass
+        w1, h1 = img1.size
+        w2, h2 = img2.size
+        dw = abs(w1 - w2)
+        dh = abs(h1 - h2)
+        img_big = img1 if (w1 > w2 and h1 > h2) else img2
+        img_small = img2 if (w1 > w2 and h1 > h2) else img1
+        w = w2 if (w1 > w2) else w1
+        h = h2 if (h1 > h2) else h1
+        img_cut = Image.new('L', (w2, h2))
+        for x in range(w):
+            for y in range(h):
+                pxl = img_big.getpixel((x+dw/2, y+dh/2))
+                img_cut.putpixel((x, y), pxl)
+        img_out = Image.new('L', (w, h))
+        for x in range(w):
+            for y in range(h):
+                pxl1 = img_cut.getpixel((x, y))
+                pxl2 = img_small.getpixel((x, y))
+                result_pxl = int((1 - alpha)*pxl1 + alpha*pxl2)
+                img_out.putpixel((x, y), result_pxl)
+        return img_out
 
+    def color_blend(img1, img2, alpha):
+        r1, g1, b1 = img1.split()
+        r2, g2, b2 = img2.split()
+        r_new = blend_image(r1, r2, alpha)
+        g_new = blend_image(g1, g2, alpha)
+        b_new = blend_image(b1, b2, alpha)
+        img_out = Image.merge('RGB',[r_new, g_new, b_new])
+        return img_out
+    
     def blurr_image(self, method: Blurr, kernel_size: int, padding_style: Style) -> Image:
         """ This function create a copy of self.image with paddings*
         and blurr it by chosen method.
