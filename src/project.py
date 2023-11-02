@@ -40,7 +40,7 @@ def selet_frame(img, point1, point2):
     w = point2[0] - point1[0]
     h = point2[1] - point1[1]
     draw.rectangle([start, (w,h)], outline = (255, 0, 0), width = 3)
-    img_f.show()
+    return img_f
 
 def color_invert(img):
     r, g, b = img.split()

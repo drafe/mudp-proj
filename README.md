@@ -95,13 +95,13 @@ new.show()
 return copy of initial image with painted rectangle with corners on point1 and point2;  
 
 ```    
-new = im_ch.select_frame([50, 50], [100, 120])
+new = im_ch.select_frame((100, 100), (550, 380))
 new.show()
 ```
 
-| Before                     | After                      |
-|----------------------------|----------------------------|
-| ![initial](images/cow.jpg) | ![changed](images/cow.jpg) |
+| Before                     | After                            |
+|----------------------------|----------------------------------|
+| ![initial](images/cow.jpg) | ![changed](images/cow_frame.jpg) |
 
 #### 6. blend_image(another_image, level)  
 
@@ -117,16 +117,16 @@ __level__ ∈ [0, 1]
 * level ∈ (0, 1) return mixed image with _level_*100% of first image
             and (1-_level_)*100% of second one
 ```    
-with Image.open('images/cow.jpg') as another_img:
+with Image.open('images/fruits.jpg') as another_img:
     another_img.load()
 
-new = im_ch.blend_image(another_img, 0.5)
+new = im_ch.blend_image(another_img, 0.8)
 new.show()
 ```
 
-| Before                                                      | After                      |
-|-------------------------------------------------------------|----------------------------|
-| ![initial](images/cow.jpg) <br/> ![initial](images/cow.jpg) | ![changed](images/cow.jpg) |
+| Before                                                         | After                            |
+|----------------------------------------------------------------|----------------------------------|
+| ![initial](images/cow.jpg) <br/> ![initial](images/fruits.jpg) | ![changed](images/cow_blend.jpg) |
 
   
 #### 7. blurr_image(method, kernel_size, padding_style)  

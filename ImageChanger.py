@@ -2,7 +2,7 @@ from PIL import Image
 from src.Paddinger import Style, Paddinger
 from src.Blurrer import Blurr, Blurrer
 from src.SobelEdgeDetector import SobelEdgeDetector
-
+import src.project as cao
 
 
 class ImageChanger:
@@ -21,9 +21,9 @@ class ImageChanger:
         """
 
         new_image = self.image.copy()
-        
+
         pixels = new_image.load()
-        
+
         width, height = new_image.size
         for x in range(width):
             for y in range(height):
@@ -45,11 +45,11 @@ class ImageChanger:
             contrast ∈ [0, 1) return image with low level of contrast;
             contrast > 1 return image with high level of contrast;
         """
-        
+
         new_image = self.image.copy()
-        
+
         pixels = new_image.load()
-        
+
         width, height = new_image.size
         for x in range(width):
             for y in range(height):
@@ -108,7 +108,6 @@ class ImageChanger:
 
         return new_image
 
-
     def inverse_colors(self) -> Image:
         """ This function create a copy of self.image,
         change colors of copy to invert and return changed image.
@@ -116,9 +115,14 @@ class ImageChanger:
         If image mode is RGB then split image by r-g-b channels
         and work with them separately like black-white images.
         After all merge channels to new image and return it """
-        pass
 
-    def select_frame(self, point1: list[int], point2: list[int]) -> Image:
+        if self.mode == 'L':
+            func = cao.invert_colors
+        else:
+            func = cao.color_invert
+        return func(self.image)
+
+    def select_frame(self, point1: tuple[int, int], point2: tuple[int, int]) -> Image:
         """ This function create a copy of self.image,
         paint a rectangle with corners on point1 and point2
 
@@ -132,9 +136,9 @@ class ImageChanger:
         //    │
         //    │
         """
-        pass
+        return cao.selet_frame(self.image, tuple(point1), tuple(point2))
 
-    def blend_image(self, another_image: Image, level: float) -> Image:
+    def blend_image(self, another_image: Image, level: float = 0.5) -> Image:
         """ This function check the sizes if self.image and another_image,
         cut images to the smallest one.
         Then create new image of smaller size then input ones
@@ -152,7 +156,12 @@ class ImageChanger:
         and work with them separately like black-white images.
         After all merge channels to new image and return it
         """
-        pass
+
+        if self.mode == 'L':
+            func = cao.blend_image
+        else:
+            func = cao.color_blend
+        return func(self.image, another_image, level)
 
     def blurr_image(self, method: Blurr, kernel_size: int, padding_style: Style) -> Image:
         """ This function create a copy of self.image with paddings*
@@ -186,9 +195,12 @@ if __name__ == '__main__':
     with Image.open('images/cow.jpg') as img:
         img.load()
 
+    with Image.open('images/fruits.jpg') as f_img:
+        f_img.load()
+
     bw_img = img.convert('L')
-    print(img.mode, bw_img.mode == 'L')
     im_ch = ImageChanger(image=img)
-    # new = im_ch.blurr_image(method=Blurr.GAUSS, padding_style=Style.MIRROR, kernel_size=12)
-    new = im_ch.detect_edge()
-    new.show()
+
+    new = im_ch.blend_image(f_img, 0.8)
+    new.save('images/cow_blend.jpg')
+    # new.show()
