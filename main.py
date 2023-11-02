@@ -1,5 +1,5 @@
 from PIL import Image
-import ImageChanger
+import image_changer
 
 file_name = 'images/cow.jpg'
 

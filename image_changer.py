@@ -1,7 +1,7 @@
 from PIL import Image
-from src.Paddinger import Style, Paddinger
-from src.Blurrer import Blurr, Blurrer
-from src.SobelEdgeDetector import SobelEdgeDetector
+from src.paddinger import Style, Paddinger
+from src.blurrer import Blurr, Blurrer
+from src.detector import SobelEdgeDetector
 import src.project as cao
 
 
