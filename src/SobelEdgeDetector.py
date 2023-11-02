@@ -57,7 +57,7 @@ class SobelEdgeDetector:
 
 
 if __name__ == "__main__":
-    filename = 'images/fruits.jpg'
+    filename = '../images/fruits.jpg'
 
     with Image.open(filename) as img:
         img.load()

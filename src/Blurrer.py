@@ -41,7 +41,7 @@ class Blurrer:
 
 
 if __name__ == "__main__":
-    filename = 'images/cow_gauss.jpg'
+    filename = '../images/cow_gauss.jpg'
 
     with Image.open(filename) as img:
         img.load()
