@@ -84,9 +84,9 @@ new = im_ch.inverse_colors()
 new.show()
 ```
 
-| Before                     | After                      |
-|----------------------------|----------------------------|
-| ![initial](images/cow.jpg) | ![changed](images/cow.jpg) |
+| Before                     | After                              |
+|----------------------------|------------------------------------|
+| ![initial](images/cow.jpg) | ![changed](images/cow_inverse.jpg) |
 
 
 

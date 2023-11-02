@@ -86,7 +86,7 @@ class Paddinger:
 
 
 if __name__ == "__main__":
-    with Image.open('images/fruits.jpg') as img:
+    with Image.open('../images/fruits.jpg') as img:
         img.load()
 
     bw_img = img.convert('L')
